@@ -73,7 +73,7 @@ def transform_apostrophe(input_str: str) -> str:
 
 
 def transform_is_word(input_str: str) -> str:
-    if not (input_str.startswith("is") and input_str[2].isupper()):
+    if not (input_str.startswith("is") and len(re.findall(r'[a-z][A-Z]', input_str)) == 1):
         return input_str
     transformed_str = input_str[2:] + "?"
 
