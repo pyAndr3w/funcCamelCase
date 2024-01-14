@@ -42,9 +42,11 @@ def camel_to_snake(input_str: str) -> str:
 def transform_question_mark(input_str: str) -> str:
     if not input_str.endswith("?"):
         return input_str
-    transformed_str = "is_" + input_str[:-1]
-
-    return transformed_str
+    if "_" in input_str:
+        return input_str[:-1]
+    else:
+        transformed_str = "is_" + input_str[:-1]
+        return transformed_str
 
 
 def transform_exclamation_mark(input_str: str) -> str:
