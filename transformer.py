@@ -10,13 +10,20 @@ import re
 snake_marks = "_?!:"
 builtins = [
     "divmod", "~divmod", "moddiv", "~moddiv", "muldiv", "muldivc", "muldivr", "muldivmod",
-    "true", "false", "null", "nil", "Nil", "null?", "throw", "throw_if", "throw_unless",
-    "throw_arg", "throw_arg_if", "throw_arg_unless", "load_int", "load_uint",
-    "preload_int", "preload_uint", "store_int", "store_uint", "~store_int", "~store_uint",
-    "load_bits", "preload_bits", "int_at", "cell_at", "slice_at", "tuple_at", "at",
-    "touch", "~touch", "touch2", "~touch2", "~dump", "~strdump", "~load_int", "~load_uint", "~load_bits",
-    "run_method0", "run_method1", "run_method2", "run_method3", "recv_internal", "recv_external"
+    "true", "false", "null", "nil", "Nil", "throw", "at",
+    "touch", "~touch", "touch2", "~touch2", "~dump", "~strdump",
+    "run_method0", "run_method1", "run_method2", "run_method3",
+    "recv_internal", "recv_external", "->", "receiveInternalMessage", "receiveExternalMessage"
 ]
+camel_replace_map = {
+    "recv_internal": "receiveInternalMessage",
+    "recv_external": "receiveExternalMessage"
+}
+
+snake_replace_map = {
+    "receiveInternalMessage": "recv_internal",
+    "receiveExternalMessage": "recv_external"
+}
 
 
 def is_snake_case(input_str: str) -> bool:
@@ -91,7 +98,7 @@ def transform_modified_word(input_str: str) -> str:
 
 def transform_string_to_camel_case(input_str: str) -> str:
     if not is_snake_case(input_str) or input_str in builtins:
-        return input_str
+        return camel_replace_map.get(input_str, input_str)
 
     question_result = transform_question_mark(input_str)
     exclamation_result = transform_exclamation_mark(question_result)
@@ -102,7 +109,7 @@ def transform_string_to_camel_case(input_str: str) -> str:
 
 def transform_string_to_snake_case(input_str: str) -> str:
     if not is_camel_case(input_str) or input_str in builtins:
-        return input_str
+        return snake_replace_map.get(input_str, input_str)
 
     is_word_result = transform_is_word(input_str)
     force_word_result = transform_force_word(is_word_result)
