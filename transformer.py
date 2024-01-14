@@ -160,7 +160,7 @@ def transform(input_file_path: str, output_dir: str, mode: int = 1):
         into_include = False
 
         for idx, token in enumerate(temp_tokens):
-            if token[0] is Name.Variable or token[0] is Name.Function:
+            if token[0] in [Keyword, Name.Variable, Name.Function]:
                 temp_tokens[idx] = (token[0], transform_string(token[1], mode))
             if into_include:
                 if token[0] is Literal.String and (token[1][1:-1].endswith(".func") or token[1][1:-1].endswith(".fc")):
