@@ -12,18 +12,59 @@ builtins = [
     "divmod", "~divmod", "moddiv", "~moddiv", "muldiv", "muldivc", "muldivr", "muldivmod",
     "true", "false", "null", "nil", "Nil", "throw", "at",
     "touch", "~touch", "touch2", "~touch2", "~dump", "~strdump",
-    "run_method0", "run_method1", "run_method2", "run_method3",
-    "recv_internal", "recv_external", "->", "receiveInternalMessage", "receiveExternalMessage"
+    "run_method0", "run_method1", "run_method2", "run_method3", "->"
 ]
 camel_replace_map = {
     "recv_internal": "receiveInternalMessage",
-    "recv_external": "receiveExternalMessage"
+    "recv_external": "receiveExternalMessage",
+    "slice_empty?": "isSliceEmpty",
+    "slice_data_empty?": "isSliceDataEmpty",
+    "slice_refs_empty?": "isSliceRefsEmpty",
+    "dict_empty?": "isDictEmpty",
+    "cell_null?": "isCellNull",
+    "tryComputeDataSize": "tryComputeDataSize",
+    "trySliceComputeDataSize": "trySliceComputeDataSize",
+    "idict_get_ref?": "tryIdictGetRef",
+    "udict_get_ref?": "tryUdictGetRef",
+    "idict_delete?": "tryIdictDelete",
+    "udict_delete?": "tryUdictDelete",
+    "idict_get?": "tryIdictGet",
+    "udict_get?": "tryUdictGet",
+    "idict_delete_get?": "tryIdictDeleteGet",
+    "udict_delete_get?": "tryUdictDeleteGet",
+    "~idict_delete_get?": "~tryIdictDeleteGet",
+    "~udict_delete_get?": "~tryUdictDeleteGet",
+    "udict_add?": "tryUdictAdd",
+    "udict_replace?": "tryUdictReplace",
+    "idict_add?": "tryIdictAdd",
+    "idict_replace?": "tryIdictReplace",
+    "udict_add_builder?": "tryUdictAddBuilder",
+    "udict_replace_builder?": "tryUdictReplaceBuilder",
+    "idict_add_builder?": "tryIdictAddBuilder",
+    "idict_replace_builder?": "tryIdictReplaceBuilder",
+    "udict_get_min?": "tryUdictGetMin",
+    "udict_get_max?": "tryUdictGetMax",
+    "udict_get_min_ref?": "tryUdictGetMinRef",
+    "udict_get_max_ref?": "tryUdictGetMaxRef",
+    "idict_get_min?": "tryIdictGetMin",
+    "idict_get_max?": "tryIdictGetMax",
+    "idict_get_min_ref?": "tryIdictGetMinRef",
+    "idict_get_max_ref?": "tryIdictGetMaxRef",
+    "udict_get_next?": "tryUdictGetNext",
+    "udict_get_nexteq?": "tryUdictGetNexteq",
+    "udict_get_prev?": "tryUdictGetPrev",
+    "udict_get_preveq?": "tryUdictGetPreveq",
+    "idict_get_next?": "tryIdictGetNext",
+    "idict_get_nexteq?": "tryIdictGetNexteq",
+    "idict_get_prev?": "tryIdictGetPrev",
+    "idict_get_preveq?": "tryIdictGetPreveq",
+    "pfxdict_get?": "tryPfxdictGet",
+    "pfxdict_set?": "tryPfxdictSet",
+    "pfxdict_delete?": "tryPfxdictDelete",
+
 }
 
-snake_replace_map = {
-    "receiveInternalMessage": "recv_internal",
-    "receiveExternalMessage": "recv_external"
-}
+snake_replace_map = {value: key for key, value in camel_replace_map.items()}
 
 
 def is_snake_case(input_str: str) -> bool:
@@ -98,6 +139,8 @@ def transform_modified_word(input_str: str) -> str:
 
 def transform_string_to_camel_case(input_str: str) -> str:
     if not is_snake_case(input_str) or input_str in builtins:
+        return input_str
+    if input_str in camel_replace_map.keys():
         return camel_replace_map.get(input_str, input_str)
 
     question_result = transform_question_mark(input_str)
@@ -109,6 +152,8 @@ def transform_string_to_camel_case(input_str: str) -> str:
 
 def transform_string_to_snake_case(input_str: str) -> str:
     if not is_camel_case(input_str) or input_str in builtins:
+        return input_str
+    if input_str in snake_replace_map.keys():
         return snake_replace_map.get(input_str, input_str)
 
     is_word_result = transform_is_word(input_str)
