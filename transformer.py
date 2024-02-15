@@ -305,6 +305,22 @@ def transform_string(input_str: str, mode: int) -> str:
     return input_str
 
 
+def transform_singleline_comment(input_str: str, mode: int) -> str:
+    if mode == 1:
+        return input_str.replace(";;;", "///").replace(";;", "//")
+    elif mode == 2:
+        return input_str.replace("///", ";;;").replace("//", ";;")
+    return input_str
+
+
+def transform_multiline_comment(input_str: str, mode: int) -> str:
+    if mode == 1:
+        return input_str.replace("{--", "/**").replace("{-", "/*").replace("-}", "*/")
+    elif mode == 2:
+        return input_str.replace("/**", "{--").replace("/*", "{-").replace("*/", "-}")
+    return input_str
+
+
 def insert_method_id(matchobj: re.Match) -> str:
     func_name = matchobj.group(1)
     crc = crc16.crc16xmodem(bytes(func_name, "UTF-8"))
@@ -341,6 +357,10 @@ def transform(input_file_path: str, output_dir: str, mode: int = 1):
         for idx, token in enumerate(temp_tokens):
             if token[0] in [Keyword, Name.Variable, Name.Function]:
                 temp_tokens[idx] = (token[0], transform_string(token[1], mode))
+            if token[0] == Comment.Singleline:
+                temp_tokens[idx] = (token[0], transform_singleline_comment(token[1], mode))
+            if token[0] == Comment.Multiline:
+                temp_tokens[idx] = (token[0], transform_multiline_comment(token[1], mode))
             if into_include:
                 if token[0] is Literal.String and (token[1][1:-1].endswith(".func") or token[1][1:-1].endswith(".fc")):
                     include_file = token[1][1:-1]
